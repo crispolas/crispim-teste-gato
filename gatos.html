@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas do documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Gatos Aleatórios</title>
+    
+    <!-- Estilos CSS para o site -->
+    <style>
+        /* Estilo geral da página */
+        body {
+            font-family: 'Arial', sans-serif;  /* Fonte padrão */
+            text-align: center;                 /* Centraliza todo o conteúdo */
+            background-color: #f0f8ff;          /* Cor de fundo azul claro */
+            padding: 20px;                     /* Espaçamento interno */
+        }
+        
+        /* Estilo do título principal */
+        h1 {
+            color: #ff6b6b;  /* Cor vermelha/rosa para o título */
+        }
+        
+        /* Container da imagem do gato */
+        .cat-container {
+            margin: 20px auto;           /* Centraliza o container */
+            max-width: 600px;            /* Largura máxima */
+            background-color: white;     /* Fundo branco */
+            padding: 20px;               /* Espaçamento interno */
+            border-radius: 10px;         /* Bordas arredondadas */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);  /* Sombra suave */
+        }
+        
+        /* Estilo da imagem do gato */
+        #cat-image {
+            max-width: 100%;        /* Garante que a imagem não ultrapasse o container */
+            max-height: 500px;     /* Altura máxima */
+            border-radius: 8px;    /* Bordas arredondadas */
+        }
+        
+        /* Estilo do botão */
+        button {
+            background-color: #4CAF50;  /* Cor verde */
+            color: white;              /* Texto branco */
+            border: none;             /* Sem borda */
+            padding: 10px 20px;       /* Espaçamento interno */
+            text-align: center;        /* Texto centralizado */
+            text-decoration: none;     /* Sem sublinhado */
+            display: inline-block;     /* Exibição em linha */
+            font-size: 16px;           /* Tamanho da fonte */
+            margin: 10px 2px;          /* Margem externa */
+            cursor: pointer;          /* Cursor de ponteiro */
+            border-radius: 5px;       /* Bordas arredondadas */
+            transition: background-color 0.3s;  /* Transição suave de cor */
+        }
+        
+        /* Efeito hover do botão */
+        button:hover {
+            background-color: #45a049;  /* Cor verde mais escura */
+        }
+        
+        /* Estilo do texto de carregamento */
+        .loading {
+            font-style: italic;  /* Texto em itálico */
+            color: #666;         /* Cor cinza */
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho do site -->
+    <h1>🐱 Gerador de Gatos Aleatórios 🐱</h1>
+    <p>Clique no botão para gerar uma imagem aleatória de gato!</p>
+    
+    <!-- Container onde a imagem do gato será exibida -->
+    <div class="cat-container">
+        <!-- Mensagem que aparece enquanto a imagem está carregando -->
+        <p id="loading-text" class="loading" style="display: none;">Carregando gato fofinho...</p>
+        
+        <!-- Elemento de imagem que será preenchido via JavaScript -->
+        <img id="cat-image" src="" alt="Imagem de gato aleatório">
+    </div>
+    
+    <!-- Botão para gerar uma nova imagem -->
+    <button id="generate-btn">Gerar Novo Gato</button>
+    
+    <!-- JavaScript que faz o site funcionar -->
+    <script>
+        // Espera o documento HTML estar completamente carregado antes de executar o código
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtém referências aos elementos importantes da página
+            const generateBtn = document.getElementById('generate-btn');  // Botão de gerar
+            const catImage = document.getElementById('cat-image');       // Elemento de imagem
+            const loadingText = document.getElementById('loading-text'); // Texto de carregamento
+            
+            // Função principal que busca uma imagem aleatória de gato
+            function fetchRandomCat() {
+                // Mostra a mensagem de carregamento
+                loadingText.style.display = 'block';
+                // Esconde a imagem enquanto carrega
+                catImage.style.display = 'none';
+                
+                // Faz uma requisição para a API TheCatAPI
+                // A API retorna um array com informações sobre imagens de gatos
+                fetch('https://api.thecatapi.com/v1/images/search')
+                    // Converte a resposta para JSON
+                    .then(response => response.json())
+                    // Processa os dados recebidos
+                    .then(data => {
+                        // Verifica se a resposta contém os dados esperados
+                        if(data && data[0] && data[0].url) {
+                            // Define a URL da imagem no elemento <img>
+                            catImage.src = data[0].url;
+                            
+                            // Quando a imagem terminar de carregar
+                            catImage.onload = function() {
+                                // Esconde o texto de carregamento
+                                loadingText.style.display = 'none';
+                                // Mostra a imagem
+                                catImage.style.display = 'block';
+                            };
+                        }
+                    })
+                    // Tratamento de erros
+                    .catch(error => {
+                        console.error('Erro ao buscar imagem de gato:', error);
+                        // Atualiza a mensagem de carregamento para mostrar o erro
+                        loadingText.textContent = 'Ocorreu um erro ao carregar a imagem. Tente novamente.';
+                    });
+            }
+            
+            // Gera a primeira imagem assim que a página carrega
+            fetchRandomCat();
+            
+            // Configura o botão para chamar a função fetchRandomCat quando clicado
+            generateBtn.addEventListener('click', fetchRandomCat);
+        });
+    </script>
+    
+    <!-- Rodapé simples -->
+    <footer>
+        <p>Todos amamos gatinhos</p>
+    </footer>
+</body>
+</html>
